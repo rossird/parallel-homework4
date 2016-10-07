@@ -144,9 +144,9 @@ int main(int argc, char **argv)
   if(argc > 1) {
     K = atoi(argv[1]);
   }
-  int blockWidth = ceil(1.0 * N / K);
+  int gridWidth = ceil(1.0 * N / K);
   
-  dim3 blocks_tiled(blockWidth,blockWidth);
+  dim3 blocks_tiled(gridWidth,gridWidth);
   dim3 threads_tiled(K,K);
   timer.Start();
   transpose_parallel_per_element_tiled<<<blocks_tiled,threads_tiled>>>(d_in, d_out);
@@ -158,9 +158,9 @@ int main(int argc, char **argv)
        
   cudaMemcpy(d_out, d_in, numbytes, cudaMemcpyDeviceToDevice); //clean d_out
   
-  dim3 blocks_tiled_sh(blockWidth,blockWidth);
+  dim3 blocks_tiled_sh(gridWidth,gridWidth);
   dim3 threads_tiled_sh(K,K);
-  size_t sharedMemSize = blockWidth * blockWidth * sizeof(float);
+  size_t sharedMemSize = K * K * sizeof(float);
   timer.Start();
   transpose_parallel_per_element_tiled_shared<<<blocks_tiled_sh,threads_tiled_sh, sharedMemSize>>>(d_in, d_out);
   timer.Stop();
